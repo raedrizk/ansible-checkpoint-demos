@@ -1,0 +1,28 @@
+---
+- name: Whitelist Source 2 Destination
+  hosts: all
+  gather_facts: false
+  vars:
+    source_ip: "{{ source_ip_input | default('10.10.10.1') }}"
+    destination_ip: "{{ destination_ip_input  | default('10.10.10.2') }}"
+  tasks:
+  - name: Create source IP host object
+    check_point.mgmt.checkpoint_host:
+      name: "asa-{{ source_ip }}"
+      ip_address: "{{ source_ip }}"
+
+  - name: Create destination IP host object
+    check_point.mgmt.checkpoint_host:
+      name: "asa-{{ destination_ip }}"
+      ip_address: "{{ destination_ip }}"
+
+  - name: Create access rule to allow access from source to destination
+    check_point.mgmt.checkpoint_access_rule:
+      auto_install_policy: yes
+      auto_publish_session: yes
+      layer: Network
+      position: top
+      name: "asa-accept-{{ source_ip }}-to-{{ destination_ip }}"
+      source: "asa-{{ source_ip }}"
+      destination: "asa-{{ destination_ip }}"
+      action: accept

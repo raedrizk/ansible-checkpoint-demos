@@ -1,0 +1,11 @@
+---
+- name: Install Policy
+  hosts: all
+  gather_facts: false
+  tasks:
+
+  - name: Install policy
+    check_point.mgmt.cp_mgmt_install_policy:
+      policy_package: standard
+      install_on_all_cluster_members_or_fail: yes
+    failed_when: false
